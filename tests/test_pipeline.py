@@ -9,6 +9,21 @@ from run import build
 
 
 class PipelineTest(unittest.TestCase):
+    def test_replaying_reference_snapshot_is_a_no_op(self):
+        from run import SOURCE
+        from urllib.request import urlopen
+
+        with urlopen(SOURCE, timeout=30) as response:
+            payload = response.read()
+        with sqlite3.connect(":memory:") as db:
+            build(payload, db)
+            before = db.execute("SELECT * FROM failure_rates ORDER BY grade, wear_band").fetchall()
+            self.assertEqual(db.total_changes, 20000)
+            build(payload, db, resume=True)
+            self.assertEqual(db.total_changes, 20000)
+            self.assertEqual(db.execute("SELECT * FROM failure_rates ORDER BY grade, wear_band").fetchall(),
+                             before)
+
     def test_reference_outputs(self):
         with sqlite3.connect("file:output/maintenance.sqlite?mode=ro", uri=True) as db:
             self.assertEqual(db.execute("SELECT COUNT(*), SUM(failed) FROM outcomes").fetchone(),

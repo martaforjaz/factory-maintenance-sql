@@ -12,21 +12,33 @@ SOURCE = "https://archive.ics.uci.edu/static/public/601/ai4i+2020+predictive+mai
 ROOT = Path(__file__).resolve().parent
 
 
-def build(payload, db):
+def build(payload, db, *, resume=False):
     with ZipFile(io.BytesIO(payload)) as archive:
         raw = archive.read("ai4i2020.csv")
     db.execute("PRAGMA foreign_keys = ON")
-    db.executescript((ROOT / "analytics.sql").read_text(encoding="utf-8"))
+    if not resume:
+        db.executescript((ROOT / "analytics.sql").read_text(encoding="utf-8"))
     with db:
         for record in csv.DictReader(io.StringIO(raw.decode("utf-8-sig"))):
             key = int(record["UDI"])
-            db.execute("INSERT INTO telemetry VALUES (?, ?, ?, ?, ?, ?, ?, ?)", (
+            telemetry = (
                 key, record["Product ID"], record["Type"],
                 float(record["Air temperature [K]"]), float(record["Process temperature [K]"]),
                 int(record["Rotational speed [rpm]"]), float(record["Torque [Nm]"]),
                 int(record["Tool wear [min]"]),
-            ))
-            db.execute("INSERT INTO outcomes VALUES (?, ?)", (key, int(record["Machine failure"])))
+            )
+            outcome = (key, int(record["Machine failure"]))
+            if resume:
+                existing = db.execute("SELECT * FROM telemetry WHERE observation_id = ?", (key,)).fetchone()
+                if existing is not None:
+                    existing_outcome = db.execute(
+                        "SELECT * FROM outcomes WHERE observation_id = ?", (key,)
+                    ).fetchone()
+                    if existing != telemetry or existing_outcome != outcome:
+                        raise ValueError(f"Conflicting replay for observation {key}")
+                    continue
+            db.execute("INSERT INTO telemetry VALUES (?, ?, ?, ?, ?, ?, ?, ?)", telemetry)
+            db.execute("INSERT INTO outcomes VALUES (?, ?)", outcome)
         failures = db.execute("SELECT * FROM quality_checks WHERE violations <> 0").fetchall()
         if failures:
             raise ValueError(f"Data quality checks failed: {failures}")
