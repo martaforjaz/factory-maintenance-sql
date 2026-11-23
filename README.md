@@ -4,7 +4,7 @@ How does the observed failure rate vary across product grades and tool wear band
 
 ![Pipeline from UCI data to validated SQLite and analysis outputs: 10,000 observations, four passing checks, and 339 labeled failures.](figures/pipeline.svg)
 
-[Run locally](#run-locally) · [Findings](#findings) · [SQL schema and views](analytics.sql) · [Data source](#data-source)
+[Run locally](#run-locally) · [Findings](#findings) · [SQL schema and views](analytics.sql) · [BigQuery port](bigquery/) · [CI checks](.github/workflows/pipeline.yml)
 
 ## Run locally
 
