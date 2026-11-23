@@ -1,0 +1,15 @@
+{
+  "job_id": "9bab222b-f841-46a6-bb01-e8e10cbe04dd",
+  "cohorts_matching_sqlite": 9,
+  "processed_bytes": 2280462,
+  "billed_bytes": 83886080,
+  "children": [
+    {"statement": "CREATE_TABLE_AS_SELECT", "processed_bytes": 590000},
+    {"statement": "CREATE_TABLE_AS_SELECT", "processed_bytes": 160000},
+    {"statement": "ASSERT", "processed_bytes": 590000},
+    {"statement": "ASSERT", "processed_bytes": 80000},
+    {"statement": "CREATE_TABLE_AS_SELECT", "processed_bytes": 510000},
+    {"statement": "CREATE_TABLE_AS_SELECT", "processed_bytes": 350000},
+    {"statement": "SELECT", "processed_bytes": 462}
+  ]
+}

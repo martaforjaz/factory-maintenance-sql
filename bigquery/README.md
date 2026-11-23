@@ -29,4 +29,14 @@ The comparison checks cohort keys, counts, ranks, and rates. The reference snaps
 
 The staging table is replaced for each batch. The raw table grows only when the batch introduces new observation IDs. Run loads serially in the dedicated dataset. A conflicting replay fails rather than modifying historical data.
 
-For a reproducibility record, capture the analytics and cohort-export job IDs in BigQuery Job History and record `statistics.query.totalBytesProcessed` for each query job. For the analytics script, report its child query jobs individually to avoid double-counting. Record the nine-cohort comparison output and both replay checks alongside those figures. Cloud execution, parity, and processed bytes have not yet been verified.
+## Verified snapshot results
+
+On 23 November 2026 the BigQuery snapshot matched SQLite for **all nine cohorts** across keys, counts, rates, and ranks. The script processed **2,280,462 bytes** in total. BigQuery reported **83,886,080 billed bytes**, a separate job metric. The final cohort SELECT processed 462 bytes. The remaining bytes came from input reads, validation and intermediate tables. See [job evidence](evidence.json).
+
+The verification runner uses a temporary-table version of the analytics script that works in BigQuery Sandbox. It loads the original snapshot into a uniquely named staging table and removes it after the run. This verifies snapshot analytics. The separate BigQuery incremental MERGE has not been verified in cloud. The SQLite replay check passed locally.
+
+```bash
+python -m pip install google-cloud-bigquery==3.38.0
+python run.py --zip /path/to/ai4i.zip
+python bigquery/verify_snapshot.py --project YOUR_PROJECT --dataset YOUR_US_DATASET --zip /path/to/ai4i.zip
+```

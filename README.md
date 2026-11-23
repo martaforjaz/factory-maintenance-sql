@@ -24,6 +24,8 @@ Use `--zip path/to/dataset.zip` for an offline run. The command creates `output/
 
 The Python loader parses the CSV into typed telemetry and outcome tables linked by an observation key. SQL enforces uniqueness, value checks, and referential integrity. SQL views also calculate temperature difference and rotational power from RPM and torque. Failure labels and failure-mode flags are excluded from the feature columns.
 
+[BigQuery verification](bigquery/README.md) confirmed all **nine failure-rate cohorts** against SQLite. The validation, feature extraction, cohort calculation, and result export processed **2,280,462 bytes** in one BigQuery script. See the [job evidence](bigquery/evidence.json) for the statement breakdown.
+
 ## Findings
 
 ![Failure rates with Wilson intervals, grouped by grade and wear band. The 200+ minute band has the highest observed rate in all grades.](figures/failure-rates.svg)
