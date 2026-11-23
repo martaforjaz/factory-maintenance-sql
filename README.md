@@ -2,6 +2,10 @@
 
 How does the observed failure rate vary across product grades and tool wear bands? This project turns a public manufacturing benchmark into a validated SQLite database, a cohort report, and a feature extract suitable for downstream ML experiments.
 
+![Pipeline from UCI data to validated SQLite and analysis outputs: 10,000 observations, four passing checks, and 339 labeled failures.](figures/pipeline.svg)
+
+[Run locally](#run-locally) · [Findings](#findings) · [SQL schema and views](analytics.sql) · [Data source](#data-source)
+
 ## Run locally
 
 Requires Python 3.11+ with SQLite 3.37+. No Python packages or cloud account needed.
@@ -22,9 +26,13 @@ The Python loader parses the CSV into typed telemetry and outcome tables linked 
 
 ## Findings
 
+![Failure rates with Wilson intervals, grouped by grade and wear band. The 200+ minute band has the highest observed rate in all grades.](figures/failure-rates.svg)
+
 The source contains 10,000 observations and 339 labeled failures (3.39%). The 200+ minute tool-wear band has the highest observed failure rate in each grade. For grade L, that is 92 failures in 503 observations (18.29%), compared with 69 in 2,754 observations (2.51%) in the 0–99 minute band.
 
 These are descriptive rates for a synthetic benchmark. Tool wear contributes to the dataset's failure-generation rules, so the association does not establish a real-world maintenance threshold. The project produces features and analytics for experimentation and does not train a model.
+
+To regenerate both figures after running the pipeline, run `python figures.py`. The chart reports denominators alongside percentages so small cohorts are visible. Its Wilson intervals assume independent binomial observations and do not measure uncertainty about real factory performance.
 
 ## Data source
 
