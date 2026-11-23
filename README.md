@@ -2,7 +2,8 @@
 
 How does the observed failure rate vary across product grades and tool wear bands? This project turns a public manufacturing benchmark into a validated SQLite database, a cohort report, and a feature extract suitable for downstream ML experiments.
 
-![Pipeline from UCI data to validated SQLite and analysis outputs: 10,000 observations, four passing checks, and 339 labeled failures.](figures/pipeline.svg)
+![Pipeline from UCI data to validated SQLite and analysis outputs: 10,000 observations, four passing checks, and 339 labeled failures.](figures/paper-workflow.svg)
+The vector figures are available as PDF in [figures/](figures/). With Python, NumPy and Matplotlib installed, run `python paper_figures.py` to regenerate them. Run `python run.py` first to generate the local cohort CSV. The visual conventions follow [figures4papers](https://github.com/ChenLiu-1996/figures4papers).
 
 [Run locally](#run-locally) · [Findings](#findings) · [SQL schema and views](analytics.sql) · [BigQuery port](bigquery/) · [CI checks](.github/workflows/pipeline.yml)
 
@@ -28,7 +29,9 @@ The Python loader parses the CSV into typed telemetry and outcome tables linked 
 
 ## Findings
 
-![Failure rates with Wilson intervals, grouped by grade and wear band. The 200+ minute band has the highest observed rate in all grades.](figures/failure-rates.svg)
+![Failure rates with Wilson intervals, grouped by grade and wear band. The 200+ minute band has the highest observed rate in all grades.](figures/paper-results.svg)
+
+Panel a shows failure rates with 95% Wilson intervals. Panel b shows processed bytes per statement in execution order. The final SELECT processed 462 bytes.
 
 The source contains 10,000 observations and 339 labeled failures (3.39%). The 200+ minute tool-wear band has the highest observed failure rate in each grade. For grade L, that is 92 failures in 503 observations (18.29%), compared with 69 in 2,754 observations (2.51%) in the 0–99 minute band.
 
